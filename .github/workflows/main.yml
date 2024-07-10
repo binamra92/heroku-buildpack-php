@@ -31,13 +31,21 @@ jobs:
 
       - name: Configure Snyk Organization
         run: |
-          snyk config set org=University of Sydney
+          snyk config set org=$SNYK_ORG
+          snyk config get org
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_ORG: ${{ secrets.SNYK_ORG }}
         continue-on-error: false
+
+      - name: Check Snyk Organization Environment Variable
+        run: echo "Snyk Org ID is $SNYK_ORG"
+        env:
+          SNYK_ORG: ${{ secrets.SNYK_ORG }}
 
       - name: Run Snyk to check for vulnerabilities
         run: |
           snyk test || true  # Ensures the workflow continues even if vulnerabilities are found
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_ORG: ${{ secrets.SNYK_ORG }}

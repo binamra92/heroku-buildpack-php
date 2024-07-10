@@ -35,7 +35,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Verify Snyk Configuration
+      - name: Report Snyk Test Results
         run: |
-          snyk config list
-        continue-on-error: false
+          echo "Snyk Test Results:"
+          snyk test --json

@@ -31,7 +31,7 @@ jobs:
 
       - name: Configure Snyk Organization
         run: |
-          snyk config set org=YOUR_ORG
+          snyk config set org=University of Sydney
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: false

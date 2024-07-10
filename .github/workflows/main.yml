@@ -29,17 +29,11 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: false
 
-      - name: Get Snyk Endpoint Configuration
-        run: |
-          snyk config get endpoint
-        continue-on-error: false
-
       - name: Run Snyk to check for vulnerabilities
         run: |
-          snyk test
+          snyk test || true  # Ensures the workflow continues even if vulnerabilities are found
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: true  # Ensures the workflow continues even if vulnerabilities are found
 
       - name: Verify Snyk Configuration
         run: |

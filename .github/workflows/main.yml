@@ -1,31 +1,18 @@
 name: Example workflow for PHP using Snyk
-
-on:
-  push:
-    branches:
-      - '**'  # Change this to the branch you want to trigger the workflow
-  pull_request:
-    branches:
-      - '**' # Change this to the branch you want to trigger the workflow
-  workflow_dispatch:  # Allows manual triggers from the GitHub UI
-
+on: push
 jobs:
   security:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3  # Updated to the latest version of the action
-
+      - uses: actions/checkout@master
       - name: Configure Snyk Endpoint
         run: |
-          snyk config set endpoint=https://app.au.snyk.io/api
+            snyk config set endpoint=https://app.au.snyk.io/api
+            snyk config set org = University of Sydney
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        continue-on-error: false  # Ensures the workflow fails if Snyk CLI configuration fails
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/php@v3
-        with:
-          command: test
+        uses: snyk/actions/php@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

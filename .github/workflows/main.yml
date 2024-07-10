@@ -34,8 +34,3 @@ jobs:
           snyk test || true  # Ensures the workflow continues even if vulnerabilities are found
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
-      - name: Report Snyk Test Results
-        run: |
-          echo "Snyk Test Results:"
-          snyk test --json

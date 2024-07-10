@@ -3,11 +3,11 @@ name: Snyk Configuration and Test
 on:
   push:
     branches:
-      - '**'  # Change this to the branch you want to trigger the workflow
+      - '**'
   pull_request:
     branches:
-      - '**'  # Change this to the branch you want to trigger the workflow
-  workflow_dispatch:  # Allows manual triggers from the GitHub UI
+      - '**'
+  workflow_dispatch:
 
 jobs:
   snyk:
@@ -25,6 +25,13 @@ jobs:
       - name: Configure Snyk Endpoint
         run: |
           snyk config set endpoint=https://app.au.snyk.io/api
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: false
+
+      - name: Configure Snyk Organization
+        run: |
+          snyk config set org=YOUR_ORG
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: false

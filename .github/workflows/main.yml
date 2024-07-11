@@ -3,11 +3,11 @@ name: Snyk Configuration and Test
 on:
   push:
     branches:
-      - '**'
+      - '**'  # Change this to the branch you want to trigger the workflow
   pull_request:
     branches:
-      - '**'
-  workflow_dispatch:
+      - '**'  # Change this to the branch you want to trigger the workflow
+  workflow_dispatch:  # Allows manual triggers from the GitHub UI
 
 jobs:
   snyk:
@@ -19,33 +19,37 @@ jobs:
 
       - name: Install Snyk CLI
         run: |
-          npm install -g snyk
+          npm install -g snyk@latest  # Ensure you have the latest version
         continue-on-error: false
 
       - name: Configure Snyk Endpoint
         run: |
           snyk config set endpoint=https://app.au.snyk.io/api
+          snyk config get endpoint  # Check that the endpoint is set correctly
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_ORG: ${{ secrets.SNYK_ORG }}
         continue-on-error: false
 
       - name: Configure Snyk Organization
         run: |
           snyk config set org=$SNYK_ORG
-          snyk config get org
+          snyk config get org  # Verify that the org is set correctly
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           SNYK_ORG: ${{ secrets.SNYK_ORG }}
         continue-on-error: false
 
-      - name: Check Snyk Organization Environment Variable
-        run: echo "Snyk Org ID is $SNYK_ORG"
-        env:
-          SNYK_ORG: ${{ secrets.SNYK_ORG }}
-
       - name: Run Snyk to check for vulnerabilities
         run: |
-          snyk test || true  # Ensures the workflow continues even if vulnerabilities are found
+          snyk test --all-projects || true  # Ensures the workflow continues even if vulnerabilities are found
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_ORG: ${{ secrets.SNYK_ORG }}
+
+      - name: Monitor project and report results to Snyk GUI
+        run: |
+          snyk monitor --all-projects  # Sends the results to Snyk GUI for tracking
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           SNYK_ORG: ${{ secrets.SNYK_ORG }}

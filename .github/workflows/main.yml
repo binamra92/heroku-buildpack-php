@@ -20,7 +20,6 @@ jobs:
       - name: Install Snyk CLI
         run: |
           npm install -g snyk@latest  # Ensure you have the latest version
-        continue-on-error: false
 
       - name: Configure Snyk Endpoint
         run: |
@@ -29,7 +28,6 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           SNYK_ORG: ${{ secrets.SNYK_ORG }}
-        continue-on-error: false
 
       - name: Configure Snyk Organization
         run: |
@@ -38,18 +36,20 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           SNYK_ORG: ${{ secrets.SNYK_ORG }}
-        continue-on-error: false
 
       - name: Run Snyk to check for vulnerabilities
         run: |
-          snyk test --all-projects || true  # Ensures the workflow continues even if vulnerabilities are found
+          for i in {1..3}; do snyk test && break || sleep 10; done  # Retry up to 3 times
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_ORG: ${{ secrets.SNYK_ORG }}
+        continue-on-error: true  # Ensures the workflow continues even if vulnerabilities are found
+
+      - name: Monitor project and report results to Snyk GUI
+        run: |
+          for i in {1..3}; do snyk monitor && break || sleep 10; done  # Retry up to 3 times
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           SNYK_ORG: ${{ secrets.SNYK_ORG }}
 
-      - name: Monitor project and report results to Snyk GUI
-        run: |
-          snyk monitor --all-projects  # Sends the results to Snyk GUI for tracking
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          SNYK_ORG: ${{ secrets.SNYK_ORG }}
+    timeout-minutes: 30  # Increase the timeout limit

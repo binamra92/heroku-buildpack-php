@@ -1,0 +1,12 @@
+<?php
+if (isset($_GET['url'])) {
+    $url = $_GET['url'];
+    // Fetch content from the specified URL
+    $response = file_get_contents($url);
+
+    // Display the content fetched from the URL
+    echo $response;
+} else {
+    echo "Please provide a URL parameter.";
+}
+?>
